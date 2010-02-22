@@ -30,9 +30,10 @@ package com.godstroke.erenTank {
 		private var gamepad_turret : Gamepad;
 		private var grass : BitmapFileMaterial;
 		private var turretController : Gamepad;
+		private var turretControllerView : GamepadView;
 
 		public function Main() {
-			super(400, 400, true, false, CameraType.TARGET);
+			super(400, 400, false, false, CameraType.TARGET);
 			
 			$camera = cameraAsCamera3D;
 			
@@ -61,28 +62,31 @@ package com.godstroke.erenTank {
 			camera.z = turret.z + 300;
 			
 			// Interactions
-			gamepad = new Gamepad(stage, true);
+			gamepad = new Gamepad(stage, false);
 			gamepad.useWASD();
 			turretController = new Gamepad(stage, false)
 			turretController.useArrows();
 			
-			//gamepad_turret = new Gamepad(stage, true);
-
+			turretControllerView = new GamepadView();
+			turretControllerView.init(turretController, 0xFF0000);
+			addChild(turretControllerView);
 			
 			gamepadView = new GamepadView();
-			gamepadView.init(gamepad, 0x1b1b1b);
+			gamepadView.init(gamepad, 0x0000FF);
 			addChild(gamepadView);
+			turretControllerView.x = 330;
 			
-			gamepadView.x = gamepadView.y = 50;
+			turretControllerView.scaleX = turretControllerView.scaleY = gamepadView.scaleX = gamepadView.scaleY = 0.7;
+			gamepadView.x = 120;
+			gamepadView.y =  turretControllerView.y = 40;
 			
 			startRendering();
 		}
 
 		private function grassLoadedListener(event : FileLoadEvent) : void {
 			var $bmfm : BitmapFileMaterial = event.target as BitmapFileMaterial;
+			$bmfm.smooth = true;
 			
-			
-
 			var segs : Number = 60;
 			var scale : Number = 2000;
 			
@@ -100,11 +104,18 @@ package com.godstroke.erenTank {
 			
 			if( Math.abs(turret.localRotationX) > verticalTurretLimit ){
 				var sign:Number = turret.localRotationX/Math.abs(turret.localRotationX);
-				
 				turret.localRotationX = sign*verticalTurretLimit;
 			}
 			
-			tankPivot.localRotationY += -gamepad.x * 3;
+//			var min:Number = -7;
+//			var max:Number = 2;
+//			if(turret.localRotationX < min){
+//				turret.localRotationX = min;	
+//			}else if(turret.localRotationX > max){
+//				turret.localRotationX = max;
+//			}
+			
+			tankPivot.localRotationY += -gamepad.x * 1.5;
 			var ang : Number = -tankPivot.localRotationY * (Math.PI / 180);
 			
 			//tankPivot.z+=gamepad.y*5;			tankPivot.x += Math.sin(ang) * gamepad.y * 11;
